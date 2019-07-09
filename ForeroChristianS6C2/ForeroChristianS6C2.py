@@ -1,0 +1,41 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+datos1 = np.genfromtxt("datosCaso1.dat")
+datos2 = np.genfromtxt("datosCaso2.dat")
+datos3 = np.genfromtxt("datosCaso3.dat")
+
+x = np.linspace(0,1, int(1/0.005))
+
+plt.figure()
+plt.plot(x, datos1[0,1:], color="black", label="0 iteraciones")
+plt.plot(x, datos1[250,1:], color="red", label="250 iteraciones")
+plt.plot(x, datos1[500,1:], color="green", label="500 iteraciones")
+plt.plot(x, datos1[750,1:], color="blue", label="750 iteraciones")
+plt.title("Solucion a ecuacion de Onda Caso 1")
+plt.xlabel("Posicion X en metros")
+plt.ylabel("Posicion Y en metros")
+plt.legend()
+plt.savefig("grafica1.png")
+
+plt.figure()
+plt.plot(x, datos2[0,1:], color="black", label="0 iteraciones")
+plt.plot(x, datos2[250,1:], color="red", label="250 iteraciones")
+plt.plot(x, datos2[500,1:], color="green", label="500 iteraciones")
+plt.plot(x, datos2[750,1:], color="blue", label="750 iteraciones")
+plt.title("Solucion a ecuacion de Onda Caso 2")
+plt.xlabel("Posicion X en metros")
+plt.ylabel("Posicion Y en metros")
+plt.legend()
+plt.savefig("grafica2.png")
+
+plt.figure()
+plt.plot(x, datos3[0,1:], color="black", label="0 iteraciones")
+plt.plot(x, datos3[250,1:], color="red", label="250 iteraciones")
+plt.plot(x, datos3[500,1:], color="green", label="500 iteraciones")
+plt.plot(x, datos3[750,1:], color="blue", label="750 iteraciones")
+plt.title("Solucion a ecuacion de Onda Caso 3")
+plt.xlabel("Posicion X en metros")
+plt.ylabel("Posicion Y en metros")
+plt.legend()
+plt.savefig("grafica3.png")
