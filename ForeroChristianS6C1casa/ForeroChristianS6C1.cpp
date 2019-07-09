@@ -7,38 +7,101 @@ using namespace std;
 
 int main()
 {
+    double a = 0.0;
+    double b = 2.0;
+    double v = 1.0;
+    int n = 1000;
     
-}
-
-//el entero 0 para condiciones de frontera periodicas, para libres 1, 2 para fijas en y=0.
-void adveccionSiguientePDE(double amplitudes[], double a, doubole b, double vec, doble deltaT, int f)
-{
-    int n = amplitudes.lenght();
-    double deltaX = (b-a)/n;
-    double amplitudesPasado[n] = amplitudes;
-    double ampXInicial;
+    int m = 500;
     
-    if(f == 0)
+    double x[n];
+    
+    for(int i = 0; i < n; i++)
     {
-        ampXInicial = amplitudes[n];
+        x[i] = a + i*((b-a)/(n-1));
     }
     
-    else if(f == 1)
-    {
-        ampXInicial = amplitudes[0];
-    }
+    double y[n];
+    double yPasado[n];
     
-    else
+    for(int i = 0; i < n; i++)
     {
-        ampXInicial = 0.0;
-    }
-    
-    amplitudes[0] = vec*(deltaT/deltaX)*(amplitudes[0]-ampXInicial);
+        if(i > n*0.75/(b-a) && i < n*1.25/(b-a) )
+        {
+            y[i] = 2.0;
+            yPasado[i] = 0.0;
+        }
         
-    for(int i = 1; i < n-1; i++)
-    {
-        amplitudes[i] = vec*(deltaT/deltaX)*(amplitudes[i]-amplitudes[i-1]);
+        else
+        {
+            y[i] = 0.0;
+            yPasado[i] = 0.0;
+        }
     }
     
+    for(int i = 0; i < n; i++)
     
+    double yFrontera0 = 0.0;
+    
+    double yFronteraN = 0.0;
+    
+    double deltaX = x[1]-x[0];
+    
+    double deltaT = (deltaX)/v;
+    
+    double tiempo = 0.0;
+    
+    ofstream outfile;
+    outfile.open("datos.dat");
+    
+    
+    //Con frontera ciclica, si la frontera fuera fija habria que cambiar el if y agregar una restriccion a el ultimo dato
+    for(int j = 0; j < m; j++)
+    {
+        //Primera columna es el tiempo, y el resto son las y en las posiciones respectivas
+        outfile<<tiempo<<" ";
+        
+        tiempo += deltaT;
+        
+        for(int i = 0; i < n; i++)
+        {
+            if(i==0)
+            {
+                yPasado[i] = y[i];
+                y[i] += v*(deltaT/deltaX)*(yPasado[1] - yPasado[n])/2.0;
+            }
+            
+            else if(i==n)
+            {
+                yPasado[i] = y[i];
+                y[i] += v*(deltaT/deltaX)*(yPasado[0] - yPasado[n-1])/2.0;
+            }
+        
+            else
+            {
+                yPasado[i] = y[i];
+                
+                if(y[i] + v*(deltaT/deltaX)*(yPasado[i+1] - yPasado[i-1])/2.0 < 2.0 && y[i] + v*(deltaT/deltaX)*(yPasado[i+1] - yPasado[i-1])/2 > 0.0)
+                {
+                    y[i] += v*(deltaT/deltaX)*(yPasado[i+1] - yPasado[i-1])/2.0;
+                }
+                
+                else if(y[i] + v*(deltaT/deltaX)*(yPasado[i+1] - yPasado[i-1])/2.0 >= 2.0)
+                {
+                    y[i] = 2;
+                }
+                
+                else
+                {
+                    y[i] = 0;
+                }
+            }
+        
+            outfile<<y[i]<<" ";
+        }
+        
+        outfile<<endl;
+    }
+    
+    outfile.close();
 }
