@@ -123,12 +123,12 @@ int main()
             
             if(i==0)
             {
-                y[i] = (c*dt/dx)*(c*dt/dx)*(yPresente[1] + yFrontIz - 2*yPresente[0]) - yPasado[0] + 2*yPresente[0];
+                y[0] = (c*dt/dx)*(c*dt/dx)*(yPresente[1] - yPresente[0]) - yPasado[0] + 2*yPresente[0];
             }
             
             else if(i==n)
             {
-                y[i] = (c*dt/dx)*(c*dt/dx)*(yPresente[n] + yPresente[n-1] - 2*yPresente[n]) - yPasado[n] + 2*yPresente[n];
+                y[n] = (c*dt/dx)*(c*dt/dx)*(yFrontDe + yPresente[n-1] - yPresente[n]) - yPasado[n] + 2*yPresente[n];
             }
         
             else
@@ -153,19 +153,9 @@ int main()
     
     for(int i = 0; i < n; i++)
     {
-        if(i < n/2)
-        {
-            y[i] = 2*((L/n)*i)*A0/L;
-            yPasado[i] = 2*((L/n)*i)*A0/L;
-            yPresente[i] = 2*((L/n)*i)*A0/L;
-        }
-        
-        else
-        {
-            y[i] = 2*A0 - 2*((L/n)*i)*A0/L;
-            yPasado[i] = 2*A0 - 2*((L/n)*i)*A0/L;
-            yPresente[i] = 2*A0 - 2*((L/n)*i)*A0/L;
-        }
+        y[i] = 0.0;
+        yPasado[i] = 0.0;
+        yPresente[i] = 0.0;
     }
     
     tiempo = 0.0;
@@ -180,7 +170,7 @@ int main()
         
         tiempo += dt;
         
-        yFrontDe = A0*cos(3*c*tiempo*M_PI/L);
+        yFrontIz = A0*sin(3*c*tiempo*M_PI/L);
         
         for(int i = 0; i < n; i++)
         {
