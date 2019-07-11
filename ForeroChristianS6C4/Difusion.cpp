@@ -6,244 +6,341 @@
 #include <cmath>
 using namespace std;
 
-double L = 1;
-
-double v = 1/(10*10*10*10);
-
-double dx = 1/(10*10);
-
-double dt = 0.25*(dx*dx)/v;
-
-int n = int(L/dx);
-
-double Tpas[n][n];
-double T[n][n];
-ofstream outfile;
-
-
-//El entero k es 1 para condicion de fronteras abiertas, 2 para periodicas y 3 para fijas, y n es el numero de iteraciones de la funcion
-void solucionDifusion(int);
+void solucionDifusionFronteraLibre();
+void solucionDifusionFronteraPeriodica();
+void solucionDifusionFronteraFija();
 
 int main()
+{ 
+    solucionDifusionFronteraLibre();
+    solucionDifusionFronteraPeriodica();
+    solucionDifusionFronteraFija();
+}
+
+void solucionDifusionFronteraLibre()
 {
+    double L = 1;
+
+    double v = 0.0001;
+
+    double dx = 0.01;
+
+    double dt = 0.25*(dx*dx)/v;
+
+    int n = int(L/dx) + 1;
+
+    double Tpas[n][n];
+    double T[n][n];
+    
     for(int i = 0; i<n; i++)
     {
         for(int j = 0; j<n; j++)
         {
-            xActual=(i/n)*L;
-            yActual=(j/n)*L;
-            
-            if(xActual>0.20 && xActual<0.40 && yActual>0.50 && yActual<0.70)
+            if(i>0.40*n && i<0.60*n && j>0.20*n && j<0.40*n)
             {
-                T[i][j] = 100;
+                Tpas[i][j] = 100.0;
+                T[i][j] = 100.0;
             }
             
             else
             {
-                T[i][j] = 50;
+                Tpas[i][j] = 50.0;
+                T[i][j] = 50.0;
             }
         }
     }
     
-    solucionDifusion(1);
-    solucionDifusion(2);
-    solucionDifusion(3);
-}
-
-void solucionDifusion(int k)
-{
-    double tiempo = 0.0;
+    ofstream outfile;
+    
     int t1 = 0;
     int t2 = int(100/dt);
     int t3 = int(2500/dt);
     
     double r = 0.5*v*dt/(dx*dx);
     
-    //Fronteras abiertas
-    if(k == 1)
+    outfile.open("datosFrontera1.dat");
+    
+    for(int t = 0; t<t3+1; t++)
     {
-        outfile.open("datosFrontera1.dat");
-        
-        for(int t = 0; t<max; t++)
+        if(t == t1 || t == t2 || t == t3)
         {
-            if(t == t1 || t == t2 || t == t3)
+            for(int x = 0; x<n; x++)
             {
-                for(int x = 0; x<n; x++)
+                for(int y = 0; y<n; y++)
                 {
-                    for(int y = 0; y<n; y++)
-                    {
-                        outfile<<T[x][y]<<" ";
-                    }
-                    
-                    outfile<<endl;
+                    outfile<<T[x][y]<<" ";
                 }
+                
+                outfile<<endl;
             }
-            
-            for(int i = 0; i<n; i++)
+        }
+        
+        for(int i = 0; i<n; i++)
+        {
+            for(int j = 0; j<n; j++)
             {
-                for(int j = 0; j<n; j++)
+                if(i == 0 && j == 0)
                 {
-                    
-                    if(i == 0 || i == n || j == 0 || j == n)
-                    {
-                        if(j != 0 || j != n || i == 0)
-                        {
-                            T[i][j] +=  r*(Tpas[0][j] + Tpas[1][j] - 4*Tpas[0][j] + Tpas[0][j-1] + Tpas[0][j+1]);
-                        }
-                        
-                        else if(j != 0 || j != n || i == n)
-                        {
-                            T[i][j] +=  r*(Tpas[n-1][j] + Tpas[n][j] - 4*Tpas[n][j] + Tpas[n][j-1] + Tpas[n][j+1]);
-                        }
-                        
-                        else if(i != 0 || i != n || j == 0)
-                        {
-                            T[i][j] +=  r*(Tpas[i-1][0] + Tpas[i+1][0] - 4*Tpas[i][0] + Tpas[i][0] + Tpas[i][1]);
-                        }
-                        
-                        else if(i != 0 || i != n || j == n)
-                        {
-                            T[i][j] +=  r*(Tpas[i-1][n] + Tpas[i+1][n] - 4*Tpas[i][n] + Tpas[i][n-1] + Tpas[i][n]);
-                        }
-                    }
-                    
-                    else
-                    {
-                        T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
-                    }
+                    T[i][j] +=  r*(Tpas[i][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j] + Tpas[i][j+1]);
                 }
-            }
-            
-            for(int i1 = 0; i1<n; i1++)
-            {
-                for(int j1 = 0; j1<n; j1++)
+                
+                else if(i == 0 && j == n-1)
                 {
-                    Tpas[i1][j1] = T[i1][j1];
+                    T[i][j] +=  r*(Tpas[i][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j]);
+                }
+                
+                else if(i == n-1 && j == 0)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i][j] - 4*Tpas[i][j] + Tpas[i][j] + Tpas[i][j+1]);
+                }
+                
+                else if(i == n-1 && j == n-1)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j]);
+                }
+                
+                else if(i == 0 && j != 0 && j != n-1)
+                {
+                    T[i][j] +=  r*(Tpas[i][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
+                }
+                
+                else if(i == n-1 && j != 0 && j != n-1)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
+                }
+                
+                else if(i != 0 && i != n-1 && j == 0)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j] + Tpas[i][j+1]);
+                }
+                
+                else if(i != 0 && i != n-1 && j == n-1)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j]);
+                }
+                
+                else
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
                 }
             }
         }
         
-        outfile.close();
+        for(int i1 = 0; i1<n; i1++)
+        {
+            for(int j1 = 0; j1<n; j1++)
+            {
+                Tpas[i1][j1] = T[i1][j1];
+            }
+        }
     }
     
-    //Fronteras periodicas
-    if(k == 2)
+    outfile.close();
+}
+
+void solucionDifusionFronteraPeriodica()
+{
+    double L = 1;
+
+    double v = 0.0001;
+
+    double dx = 0.01;
+
+    double dt = 0.25*(dx*dx)/v;
+
+    int n = int(L/dx) + 1;
+
+    double Tpas[n][n];
+    double T[n][n];
+    
+    for(int i = 0; i<n; i++)
     {
-        outfile.open("datosFrontera2.dat");
-        
-        for(int t = 0; t<max; t++)
+        for(int j = 0; j<n; j++)
         {
-            if(t == t1 || t == t2 || t == t3)
+            if(i>0.40*n && i<0.60*n && j>0.20*n && j<0.40*n)
             {
-                for(int x = 0; x<n; x++)
-                {
-                    for(int y = 0; y<n; y++)
-                    {
-                        outfile<<T[x][y]<<" ";
-                    }
-                    
-                    outfile<<endl;
-                }
+                Tpas[i][j] = 100.0;
+                T[i][j] = 100.0;
             }
             
-            for(int i = 0; i<n; i++)
+            else
             {
-                for(int j = 0; j<n; j++)
-                {
-                    
-                    if(i == 0 || i == n || j == 0 || j == n)
-                    {
-                        if(j != 0 || j != n || i == 0)
-                        {
-                            T[i][j] +=  r*(Tpas[n][j] + Tpas[1][j] - 4*Tpas[0][j] + Tpas[0][j-1] + Tpas[0][j+1]);
-                        }
-                        
-                        else if(j != 0 || j != n || i == n)
-                        {
-                            T[i][j] +=  r*(Tpas[n-1][j] + Tpas[0][j] - 4*Tpas[n][j] + Tpas[n][j-1] + Tpas[n][j+1]);
-                        }
-                        
-                        else if(i != 0 || i != n || j == 0)
-                        {
-                            T[i][j] +=  r*(Tpas[i-1][0] + Tpas[i+1][0] - 4*Tpas[i][0] + Tpas[i][n] + Tpas[i][1]);
-                        }
-                        
-                        else if(i != 0 || i != n || j == n)
-                        {
-                            T[i][j] +=  r*(Tpas[i-1][n] + Tpas[i+1][n] - 4*Tpas[i][n] + Tpas[i][n-1] + Tpas[i][0]);
-                        }
-                    }
-                    
-                    else
-                    {
-                        T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
-                    }
-                }
+                Tpas[i][j] = 50.0;
+                T[i][j] = 50.0;
             }
-            
-            for(int i1 = 0; i1<n; i1++)
+        }
+    }
+    
+    ofstream outfile;
+    
+    int t1 = 0;
+    int t2 = int(100/dt);
+    int t3 = int(2500/dt);
+    
+    double r = 0.5*v*dt/(dx*dx);
+    
+    outfile.open("datosFrontera2.dat");
+    
+    for(int t = 0; t<t3+1; t++)
+    {
+        if(t == t1 || t == t2 || t == t3)
+        {
+            for(int x = 0; x<n; x++)
             {
-                for(int j1 = 0; j1<n; j1++)
+                for(int y = 0; y<n; y++)
                 {
-                    Tpas[i1][j1] = T[i1][j1];
+                    outfile<<T[x][y]<<" ";
+                }
+                
+                outfile<<endl;
+            }
+        }
+        
+        for(int i = 0; i<n; i++)
+        {
+            for(int j = 0; j<n; j++)
+            {
+                if(i == 0 && j == 0)
+                {
+                    T[i][j] +=  r*(Tpas[n-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][n-1] + Tpas[i][j+1]);
+                }
+                
+                else if(i == 0 && j == n-1)
+                {
+                    T[i][j] +=  r*(Tpas[n-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][0]);
+                }
+                
+                else if(i == n-1 && j == 0)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[0][j] - 4*Tpas[i][j] + Tpas[i][n-1] + Tpas[i][j+1]);
+                }
+                
+                else if(i == n-1 && j == n-1)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[0][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][0]);
+                }
+                
+                else if(i == 0 && j != 0 && j != n-1)
+                {
+                    T[i][j] +=  r*(Tpas[n-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
+                }
+                
+                else if(i == n-1 && j != 0 && j != n-1)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[0][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
+                }
+                
+                else if(i != 0 && i != n-1 && j == 0)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][n-1] + Tpas[i][j+1]);
+                }
+                
+                else if(i != 0 && i != n-1 && j == n-1)
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][0]);
+                }
+                
+                else
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
                 }
             }
         }
         
-        outfile.close();
+        for(int i1 = 0; i1<n; i1++)
+        {
+            for(int j1 = 0; j1<n; j1++)
+            {
+                Tpas[i1][j1] = T[i1][j1];
+            }
+        }
     }
     
-    //Froenteras fijas
-    if(k == 3)
+    outfile.close();
+}
+
+void solucionDifusionFronteraFija()
+{
+    double L = 1;
+
+    double v = 0.0001;
+
+    double dx = 0.01;
+
+    double dt = 0.25*(dx*dx)/v;
+
+    int n = int(L/dx) + 1;
+
+    double Tpas[n][n];
+    double T[n][n];
+    
+    for(int i = 0; i<n; i++)
     {
-        outfile.open("datosFrontera3.dat");
-        
-        for(int t = 0; t<max; t++)
+        for(int j = 0; j<n; j++)
         {
-            if(t == t1 || t == t2 || t == t3)
+            if(i>0.40*n && i<0.60*n && j>0.20*n && j<0.40*n)
             {
-                for(int x = 0; x<n; x++)
-                {
-                    for(int y = 0; y<n; y++)
-                    {
-                        outfile<<T[x][y]<<" ";
-                    }
-                    
-                    outfile<<endl;
-                }
+                Tpas[i][j] = 100.0;
+                T[i][j] = 100.0;
             }
             
-            for(int i = 0; i<n; i++)
+            else
             {
-                for(int j = 0; j<n; j++)
-                {
-                    
-                    if(i == 0 || i == n || j == 0 || j == n)
-                    {
-                        T[i][j] = 0.0;
-                    }
-                    
-                    else
-                    {
-                        T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
-                    }
-                }
+                Tpas[i][j] = 50.0;
+                T[i][j] = 50.0;
             }
-            
-            for(int i1 = 0; i1<n; i1++)
+        }
+    }
+    
+    ofstream outfile;
+    
+    int t1 = 0;
+    int t2 = int(100/dt);
+    int t3 = int(2500/dt);
+    
+    double r = 0.5*v*dt/(dx*dx);
+    
+    outfile.open("datosFrontera3.dat");
+    
+    for(int t = 0; t<t3+1; t++)
+    {
+        if(t == t1 || t == t2 || t == t3)
+        {
+            for(int x = 0; x<n; x++)
             {
-                for(int j1 = 0; j1<n; j1++)
+                for(int y = 0; y<n; y++)
                 {
-                    Tpas[i1][j1] = T[i1][j1];
+                    outfile<<T[x][y]<<" ";
+                }
+                
+                outfile<<endl;
+            }
+        }
+        
+        for(int i = 0; i<n; i++)
+        {
+            for(int j = 0; j<n; j++)
+            {
+                if(i == 0 || j == 0 || i == n-1 || j == n-1)
+                {
+                    T[i][j] =  50.0;
+                }
+                
+                else
+                {
+                    T[i][j] +=  r*(Tpas[i-1][j] + Tpas[i+1][j] - 4*Tpas[i][j] + Tpas[i][j-1] + Tpas[i][j+1]);
                 }
             }
         }
         
-        outfile.close();
+        for(int i1 = 0; i1<n; i1++)
+        {
+            for(int j1 = 0; j1<n; j1++)
+            {
+                Tpas[i1][j1] = T[i1][j1];
+            }
+        }
     }
     
-    else
-    {
-        cout<<"No se encontraron las condiciones de fronteras deseadas"
-    }
+    outfile.close();
 }
