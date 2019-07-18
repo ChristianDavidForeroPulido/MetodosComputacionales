@@ -14,7 +14,9 @@ double f_y(double , double , double, double, double);
 double G;
 double M_sol;
 
-void eulerSegOrden(F, F, F, F, double, double, double, double);
+void eulerSegOrden(F, F, F, F, double, double, double, double, double);
+void leapFrogSegOrden(F, F, F, F, double, double, double, double, double);
+
     
 int main()
 {
@@ -27,7 +29,9 @@ int main()
     double x0 = 0.1163;
     double y0 = 0.9772;
     
-    eulerSegOrden(f_vx, f_vy, f_x, f_y, x0, y0, vx0, vy0);
+    eulerSegOrden(f_vx, f_vy, f_x, f_y, x0, y0, vx0, vy0, 0.05);
+    eulerSegOrden(f_vx, f_vy, f_x, f_y, x0, y0, vx0, vy0, 0.01);
+    eulerSegOrden(f_vx, f_vy, f_x, f_y, x0, y0, vx0, vy0, 0.001);
     
     return 0;
 }
@@ -52,25 +56,67 @@ double f_y(double t_f_y, double x_f_y, double y_f_y, double vx_f_y, double vy_f_
     return -y_f_y*G*M_sol/pow(pow(x_f_y, 2) + pow(y_f_y, 2), 1.5);
 }
 
-void eulerSegOrden(F funVx, F funVy, F funX, F funY, double x_0, double y_0, double vx_0, double vy_0)
+void eulerSegOrden(F funVx, F funVy, F funX, F funY, double x_0, double y_0, double vx_0, double vy_0, double dt)
 {
-    double h = 0.01;
-    
     double x = x_0;
     double y = y_0;
     double v_x = vx_0;
     double v_y = vy_0;
-    ofstream outfile;
-    outfile.open("datosEuler.dat");
     
-    for(double t = 0.0; t < 20.0; t+=h)
+    double xPas = x_0;
+    double yPas = y_0;
+    double v_xPas = vx_0;
+    double v_yPas = vy_0;
+    
+    ofstream outfile;
+    outfile.open("euler_dt="+to_string(dt)+".dat");
+    
+    for(double t = 0.0; t < 20.0; t+=dt)
     {
         outfile<<t<<" "<<x<<" "<<y<<" "<<v_x<<" "<<v_y<<endl;
         
-        v_x += h*funX(t, x, y, v_x, v_y);
-        v_y += h*funY(t, x, y, v_x, v_y);
-        x += h*funVx(t, x, y, v_x, v_y);
-        y += h*funVy(t, x, y, v_x, v_y);
+        xPas = x;
+        yPas = y;
+        v_xPas = v_x;
+        v_yPas = v_y;
+        
+        v_x += dt*funX(t, xPas, yPas, v_xPas, v_yPas);
+        v_y += dt*funY(t, xPas, yPas, v_xPas, v_yPas);
+        x += dt*funVx(t, xPas, yPas, v_xPas, v_yPas);
+        y += dt*funVy(t, xPas, yPas, v_xPas, v_yPas);
+    }
+    
+    outfile.close();
+}
+
+void leapFrogSegOrden(F funVx, F funVy, F funX, F funY, double x_0, double y_0, double vx_0, double vy_0, double dt)
+{
+    double x = x_0;
+    double y = y_0;
+    double v_x = vx_0;
+    double v_y = vy_0;
+    
+    double xPas = x_0;
+    double yPas = y_0;
+    double v_xPas = vx_0;
+    double v_yPas = vy_0;
+    
+    ofstream outfile;
+    outfile.open("euler_dt="+to_string(dt)+".dat");
+    
+    for(double t = 0.0; t < 20.0; t+=dt)
+    {
+        outfile<<t<<" "<<x<<" "<<y<<" "<<v_x<<" "<<v_y<<endl;
+        
+        xPas = x;
+        yPas = y;
+        v_xPas = v_x;
+        v_yPas = v_y;
+        
+        v_x += dt*funX(t, xPas, yPas, v_xPas, v_yPas);
+        v_y += dt*funY(t, xPas, yPas, v_xPas, v_yPas);
+        x += dt*funVx(t, xPas, yPas, v_xPas, v_yPas);
+        y += dt*funVy(t, xPas, yPas, v_xPas, v_yPas);
     }
     
     outfile.close();
