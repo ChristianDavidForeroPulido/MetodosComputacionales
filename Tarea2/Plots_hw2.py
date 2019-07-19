@@ -70,7 +70,7 @@ plt.title("RungeKutta con dt = 0.001")
 plt.xlabel("X (unidades astronomicas)")
 plt.ylabel("Y (unidades astronomicas)")
 
-plt.savefig("posiciones.png")
+plt.savefig("XY_met_dt.pdf")
 
 #Graficas para todos los metodos y todos los dt de ENERGIA CONTRA TIEMPO
 plt.figure(figsize=(18,18))
@@ -129,7 +129,7 @@ plt.title("RungeKutta con dt = 0.001")
 plt.xlabel("Tiempo (anios)")
 plt.ylabel("Energia (MasaSolar*(AU/anios)**2)")
 
-plt.savefig("energia.png")
+plt.savefig("Ener_met_dt.pdf")
 
 #Graficas para todos los metodos y todos los dt de MOMENTO CONTRA TIEMPO
 plt.figure(figsize=(18,18))
@@ -188,7 +188,7 @@ plt.title("RungeKutta con dt = 0.001")
 plt.xlabel("Tiempo (anios)")
 plt.ylabel("Momento Angular (MasaSolar*(AU**2)/anios")
 
-plt.savefig("momento.png")
+plt.savefig("Mome_met_dt.pdf")
 
 #Graficas para todos los metodos y todos los dt de VELOCIDADES
 plt.figure(figsize=(18,18))
@@ -247,4 +247,4 @@ plt.title("RungeKutta con dt = 0.001")
 plt.xlabel("Velocidad en x (AU/anios)")
 plt.ylabel("Velocidad en y (AU/anios)")
 
-plt.savefig("velocidades.png")
+plt.savefig("VxVy_met_dt.pdf")
