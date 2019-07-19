@@ -14,7 +14,7 @@ rungeKutta2 = np.genfromtxt("rungeKutta_dt=0.010000.dat")
 rungeKutta3 = np.genfromtxt("rungeKutta_dt=0.001000.dat")
 
 #Graficas para todos los metodos y todos los dt d X CONTRA Y
-plt.figure(figsize=(15,15))
+plt.figure(figsize=(18,18))
 
 plt.subplot(3,3,1)
 plt.plot(euler1[:,1], euler1[:,2], color="blue")
@@ -73,7 +73,7 @@ plt.ylabel("Y (unidades astronomicas)")
 plt.savefig("posiciones.png")
 
 #Graficas para todos los metodos y todos los dt de ENERGIA CONTRA TIEMPO
-plt.figure(figsize=(15,15))
+plt.figure(figsize=(18,18))
 
 plt.subplot(3,3,1)
 plt.plot(euler1[:,0], euler1[:,5], color="blue")
@@ -132,7 +132,7 @@ plt.ylabel("Energia (MasaSolar*(AU/anios)**2)")
 plt.savefig("energia.png")
 
 #Graficas para todos los metodos y todos los dt de MOMENTO CONTRA TIEMPO
-plt.figure(figsize=(15,15))
+plt.figure(figsize=(18,18))
 
 plt.subplot(3,3,1)
 plt.plot(euler1[:,0], euler1[:,6], color="blue")
@@ -191,7 +191,7 @@ plt.ylabel("Momento Angular (MasaSolar*(AU**2)/anios")
 plt.savefig("momento.png")
 
 #Graficas para todos los metodos y todos los dt de VELOCIDADES
-plt.figure(figsize=(15,15))
+plt.figure(figsize=(18,18))
 
 plt.subplot(3,3,1)
 plt.plot(euler1[:,3], euler1[:,4], color="blue")
