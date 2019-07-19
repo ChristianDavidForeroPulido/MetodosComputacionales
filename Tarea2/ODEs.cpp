@@ -86,7 +86,7 @@ void eulerSegOrden(F funVx, F funVy, F funX, F funY, double x_0, double y_0, dou
     
     for(double t = 0.0; t < 20.0; t+=dt)
     {
-        outfile<<t<<" "<<x<<" "<<y<<" "<<energia<<" "<<momento<<endl;
+        outfile<<t<<" "<<x<<" "<<y<<" "<<v_x<<" "<<v_y<<" "<<energia<<" "<<momento<<endl;
         
         xPas = x;
         yPas = y;
@@ -130,7 +130,7 @@ void leapFrogSegOrden(F funVx, F funVy, F funX, F funY, double x_0, double y_0, 
     
     for(double t = 0.0; t < 20.0; t+=dt)
     {
-        outfile<<t<<" "<<x<<" "<<y<<" "<<energia<<" "<<momento<<endl;
+        outfile<<t<<" "<<x<<" "<<y<<" "<<v_x<<" "<<v_y<<" "<<energia<<" "<<momento<<endl;
         
         xPas = xPre;
         yPas = yPre;
@@ -194,7 +194,7 @@ void rungeKuttaSegOrden(F funVx, F funVy, F funX, F funY, double x_0, double y_0
     
     for(double t = 0.0; t < 20.0; t+=dt)
     {        
-        outfile<<t<<" "<<x<<" "<<y<<" "<<energia<<" "<<momento<<endl;
+        outfile<<t<<" "<<x<<" "<<y<<" "<<v_x<<" "<<v_y<<" "<<energia<<" "<<momento<<endl;
         
         xPas = x;
         yPas = y;
